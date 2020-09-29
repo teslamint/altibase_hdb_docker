@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 if [ -z "$TRCHOME" ]; then
 	export TRCHOME=$ALTIBASE_HOME/trc
@@ -65,4 +65,3 @@ do
 	    ;;
 	esac
 done < altibase.properties.release
-
