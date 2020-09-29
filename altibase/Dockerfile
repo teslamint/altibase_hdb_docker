@@ -28,7 +28,7 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y autoconf autopoint help2man texinfo g++ gawk flex \
     libncurses5-dev binutils-dev ddd tkdiff manpages-dev libldap2-dev \
-    cmake curl git texlive libssl-dev libtool gettext \
+    cmake curl texlive libssl-dev libtool gettext \
     build-essential openjdk-7-jdk && \
     apt-get clean && rm -rf /var/cache/apt/*
 ENV ADAPTER_JAVA_HOME /usr/lib/jvm/java-1.7.0-openjdk-amd64
@@ -97,10 +97,6 @@ ENV LD_LIBRARY_PATH	$ALTIBASE_HOME/lib:$LD_LIBRARY_PATH
 RUN echo "alias godev='cd $ALTIBASE_DEV'" >> /root/.bashrc
 ENV PATH $ALTIBASE_HOME/bin:$JAVA_HOME/bin:$PATH
 ENV LANG en_US.UTF-8
-
-#####################################
-# git no check ssl
-ENV GIT_SSL_NO_VERIFY 0
 
 #####################################
 # get & build source code
