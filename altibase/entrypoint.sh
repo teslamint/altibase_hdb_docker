@@ -1,11 +1,9 @@
-w
-w
 #!/usr/bin/env bash
 
 #######################################
 # Folders
 #
-#ALTIDATAHOME /Volume/disk1/altibase
+#ALTIDATAHOME /opt/altibase/data
 #TRCHOME      $ALTIDATAHOME/trc
 #DISKDBHOME   $ALTIDATAHOME/dbs
 #MEMDBHOME    $ALTIDATAHOME/dbs
@@ -36,7 +34,7 @@ create_folder()
     fi
     if [ ! -z "$MEMDBHOME" ]; then
         echo "mkdir -p "$MEMDBHOME
-        mkdir -p $MEMDBHOME 
+        mkdir -p $MEMDBHOME
     fi
     if [ ! -z "$LOGSHOME" ]; then
         echo "mkdir -p "$LOGSHOME
@@ -108,7 +106,7 @@ case "$result" in
     *0*)
       echo "create altibase"
       create_folder
-      server create MS949 UTF8
+      server create UTF8 UTF8
       echo "start altibase"
       altibase -n
       ;;
@@ -118,7 +116,7 @@ case "$result" in
       clean_db
       echo "create altibase"
       create_folder
-      server create MS949 UTF8
+      server create UTF8 UTF8
       echo "start altibase"
       altibase -n
       ;;
