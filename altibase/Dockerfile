@@ -20,13 +20,13 @@ ENV FLEX_VERSION 2.5.39
 
 #####################################
 # install basic development tools
-RUN sed -ie 's/archive.ubuntu/mirror.kakao/g' /etc/apt/sources.list
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && \
-    apt-get install -y software-properties-common && \
+# RUN sed -ie 's/archive.ubuntu/mirror.kakao/g' /etc/apt/sources.list
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -qq && \
+    apt-get install -qq -y software-properties-common && \
     add-apt-repository -y ppa:openjdk-r/ppa && \
-    apt-get update && \
-    apt-get install -y autoconf autopoint help2man texinfo g++ gawk flex \
+    apt-get update -qq && \
+    apt-get install -qq -y autoconf autopoint help2man texinfo g++ gawk flex \
     libncurses5-dev binutils-dev ddd tkdiff manpages-dev libldap2-dev \
     cmake curl texlive libssl-dev libtool gettext \
     build-essential openjdk-7-jdk && \
