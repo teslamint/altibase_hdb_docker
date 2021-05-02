@@ -29,9 +29,9 @@ RUN apt-get update -qq && \
     apt-get install -qq -y autoconf autopoint help2man texinfo g++ gawk flex \
     libncurses5-dev binutils-dev ddd tkdiff manpages-dev libldap2-dev \
     cmake curl texlive libssl-dev libtool gettext \
-    build-essential openjdk-7-jdk && \
+    build-essential openjdk-8-jdk && \
     apt-get clean && rm -rf /var/cache/apt/*
-ENV ADAPTER_JAVA_HOME /usr/lib/jvm/java-1.7.0-openjdk-amd64
+ENV ADAPTER_JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
 
 #####################################
 # patch sysctl
