@@ -82,7 +82,7 @@ ENV JAVA_HOME /usr/share/java/jdk1.5.0_22
 
 #####################################
 # install java 1.7
-RUN curl -L https://repo.huaweicloud.com/java/jdk/7u80-b15/jdk-7u80-linux-x64.tar.gz | tar xzf -C /usr/share/java -
+RUN curl -L https://repo.huaweicloud.com/java/jdk/7u80-b15/jdk-7u80-linux-x64.tar.gz | tar xzf - -C /usr/share/java
 ENV ADAPTER_JAVA_HOME /usr/share/java/jdk1.7.0_80
 
 #####################################
