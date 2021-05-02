@@ -23,15 +23,11 @@ ENV FLEX_VERSION 2.5.39
 # RUN sed -ie 's/archive.ubuntu/mirror.kakao/g' /etc/apt/sources.list
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -qq && \
-    apt-get install -qq -y software-properties-common && \
-    add-apt-repository -y ppa:openjdk-r/ppa && \
-    apt-get update -qq && \
     apt-get install -qq -y autoconf autopoint help2man texinfo g++ gawk flex \
     libncurses5-dev binutils-dev ddd tkdiff manpages-dev libldap2-dev \
     cmake curl texlive libssl-dev libtool gettext \
-    build-essential openjdk-8-jdk && \
-    apt-get clean && rm -rf /var/cache/apt/*
-ENV ADAPTER_JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
+    build-essential && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 #####################################
 # patch sysctl
@@ -83,6 +79,11 @@ RUN chmod +x jdk-1_5_0_22-linux-amd64.bin && \
     rm -fR jdk*
 
 ENV JAVA_HOME /usr/share/java/jdk1.5.0_22
+
+#####################################
+# install java 1.7
+RUN curl -L https://repo.huaweicloud.com/java/jdk/7u80-b15/jdk-7u80-linux-x64.tar.gz | tar xzf -C /usr/share/java -
+ENV ADAPTER_JAVA_HOME /usr/share/java/jdk1.7.0_80
 
 #####################################
 # set go environments
