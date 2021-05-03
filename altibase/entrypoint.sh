@@ -93,7 +93,7 @@ check_has_db()
 }
 
 result="0"
-if [ $# -eq 1 ]
+if [ "$result" -eq "1" ]
 then
     result="3"
 else
@@ -103,14 +103,14 @@ fi
 echo "result="$result
 
 case "$result" in
-    *0*)
+    "1")
       echo "create altibase"
       create_folder
       server create UTF8 UTF8
       echo "start altibase"
       altibase -n
       ;;
-    *2*)
+    "2")
       echo "illegal database"
       echo "clean altibase"
       clean_db
@@ -120,7 +120,7 @@ case "$result" in
       echo "start altibase"
       altibase -n
       ;;
-    *1*)
+    "0")
       echo "start altibase"
       altibase -n
       ;;
