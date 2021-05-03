@@ -9,14 +9,14 @@
 #
 #####################################
 # os image
-FROM ubuntu:16.04
+FROM ubuntu:16.04 as builder
 
 #####################################
 # build environment
-ENV ALTIBASE_VERSION 7.1.0.2.4
-ENV RE2C_VERSION 0.13.5
-ENV BISON_VERSION 2.7
-ENV FLEX_VERSION 2.5.39
+ARG ALTIBASE_VERSION=7.1.0.2.4
+ARG RE2C_VERSION=0.13.5
+ARG BISON_VERSION=2.7
+ARG FLEX_VERSION=2.5.39
 
 #####################################
 # install basic development tools
@@ -25,9 +25,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -qq && \
     apt-get install -qq -y autoconf autopoint help2man texinfo g++ gawk flex \
     libncurses5-dev binutils-dev ddd tkdiff manpages-dev libldap2-dev \
-    cmake curl texlive libssl-dev libtool gettext \
-    build-essential && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    cmake curl texlive libssl-dev libtool gettext build-essential && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 #####################################
 # patch sysctl
@@ -38,9 +38,9 @@ RUN bash sysctl_patch.sh && \
     rm sysctl_patch.sh
 
 #####################################
-# patch sysctl
+# patch sys/select
 ADD select.patch ./
-RUN cd /usr/include/x86_64-linux-gnu/sys && \
+RUN cd /usr/include/$(uname -m)-linux-gnu/sys && \
     patch -p1 < /opt/select.patch && \
     rm /opt/select.patch && \
     cd /opt
@@ -82,7 +82,7 @@ ENV JAVA_HOME /usr/share/java/jdk1.5.0_22
 
 #####################################
 # install java 1.7
-RUN curl -L https://repo.huaweicloud.com/java/jdk/7u80-b15/jdk-7u80-linux-x64.tar.gz | tar xzf - -C /usr/share/java
+RUN curl -L https://github.com/frekele/oracle-java/releases/download/7u80-b15/jdk-7u80-linux-x64.tar.gz | tar xzf - -C /usr/share/java
 ENV ADAPTER_JAVA_HOME /usr/share/java/jdk1.7.0_80
 
 #####################################
@@ -105,19 +105,54 @@ RUN curl -L https://github.com/ALTIBASE/altibase/archive/${ALTIBASE_VERSION}.tar
     mv altibase-${ALTIBASE_VERSION} altibase && \
     cd altibase && \
     ./configure --with-build_mode=release && \
-    make build
+    make build -j$(nproc)
+
+#####################################
+# final image
+FROM ubuntu:20.04 as final
+
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -qq && \
+    apt-get install -qq -y openjdk-8-jre-headless && \
+    apt-get autoremove -qq -y && apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+
+#####################################
+# patch sysctl
+WORKDIR /opt
+ADD sysctl_patch.sh ./
+RUN bash sysctl_patch.sh && \
+    rm sysctl_patch.sh
+
+#####################################
+# copy altibase file from builder image
+RUN mkdir -p /opt/altibase
+
+WORKDIR /opt/altibase
+COPY --from=builder /opt/altibase/altibase_home /opt/altibase/altibase_home/
 
 #####################################
 # create altibase.properties
 VOLUME ["/opt/altibase/data"]
-ENV  ALTIDATAHOME /opt/altibase/data
-ENV  TRCHOME      $ALTIDATAHOME/trc
-ENV  DISKDBHOME   $ALTIDATAHOME/dbs
-ENV  MEMDBHOME    $ALTIDATAHOME/dbs
-ENV  LOGSHOME     $ALTIDATAHOME/logs
-ENV  ARCHIVE_DIR  $ALTIDATAHOME/arch_logs
+
+ENV ALTIBASE_HOME	/opt/altibase/altibase_home
+ENV ALTIBASE_NLS_USE	UTF8
+ENV ALTIBASE_PORT_NO	20300
+ENV CLASSPATH		.:${JAVA_HOME}/jre/lib:${ALTIBASE_HOME}/lib/Altibase.jar:$CLASSPATH
+ENV LD_LIBRARY_PATH	$ALTIBASE_HOME/lib:$LD_LIBRARY_PATH
+ENV PATH $ALTIBASE_HOME/bin:$JAVA_HOME/bin:$PATH
+ENV LANG en_US.UTF-8
+
+ENV ALTIDATAHOME /opt/altibase/data
+ENV TRCHOME      $ALTIDATAHOME/trc
+ENV DISKDBHOME   $ALTIDATAHOME/dbs
+ENV MEMDBHOME    $ALTIDATAHOME/dbs
+ENV LOGSHOME     $ALTIDATAHOME/logs
+ENV ARCHIVE_DIR  $ALTIDATAHOME/arch_logs
+
 ADD patch_property.sh /opt/altibase/altibase_home/conf/
-RUN  mkdir -p $ALTIDATAHOME/{trc,dbs,logs,arch_logs} && \
+RUN mkdir -p $ALTIDATAHOME/{trc,dbs,logs,arch_logs} && \
     cd $ALTIBASE_HOME/conf && \
     bash patch_property.sh && \
     rm patch_property.sh
