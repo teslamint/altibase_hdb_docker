@@ -113,7 +113,7 @@ FROM ubuntu:20.04 as final
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -qq && \
-    apt-get install -qq -y openjdk-8-jre-headless && \
+    apt-get install -qq -y openjdk-8-jre-headless libncurses5 && \
     apt-get autoremove -qq -y && apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
