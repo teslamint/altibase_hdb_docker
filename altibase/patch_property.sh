@@ -48,18 +48,6 @@ do
 	    echo "#"$line >> altibase.properties
             echo "DEFAULT_DISK_DB_DIR = "$DISKDBHOME >> altibase.properties
 	    ;;
-	  *LOGANCHOR_DIR3*)
-	    echo "#"$line >> altibase.properties
-            echo "LOGANCHOR_DIR3 = "$LOGSHOME >> altibase.properties
-	    ;;
-	  *LOGANCHOR_DIR2*)
-	    echo "#"$line >> altibase.properties
-            echo "LOGANCHOR_DIR2 = "$LOGSHOME >> altibase.properties
-	    ;;
-	  *LOGANCHOR_DIR1*)
-	    echo "#"$line >> altibase.properties
-            echo "LOGANCHOR_DIR1 = "$LOGSHOME >> altibase.properties
-	    ;;
 	  *LOGANCHOR_DIR*)
 	    echo "#"$line >> altibase.properties
             echo "LOGANCHOR_DIR = "$LOGSHOME >> altibase.properties
