@@ -152,7 +152,7 @@ ENV LOGSHOME     $ALTIDATAHOME/logs
 ENV ARCHIVE_DIR  $ALTIDATAHOME/arch_logs
 
 ADD patch_property.sh /opt/altibase/altibase_home/conf/
-RUN mkdir -p $ALTIDATAHOME/{trc,dbs,logs,arch_logs} && \
+RUN mkdir -p ${TRCHOME} ${DISKDBHOME} ${MEMDBHOME} ${LOGSHOME} ${ARCHIVE_DIR} && \
     cd $ALTIBASE_HOME/conf && \
     bash patch_property.sh && \
     rm patch_property.sh
